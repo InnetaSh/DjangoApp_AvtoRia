@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <title>Объявления</title>
+</head>
+<body>
+    <nav class="header">
+        <div><a href="{% url 'home' %}">
+            <img  style="width: 200px; " src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
+        </a></div>
+        <nav class="menu">
+            <div><a href="{% url 'create_ad' %}" >+Add car</a></div>
+        </nav>
+    </nav>
+
+
+<div class="filterBlock">
+    <form method="get" action="{% url 'filter_result' %}" id="filterForm">
+        <label for="markaSelect">Марка:</label><br />
+        <select name="marka" id="markaSelect" class="inputBlock">
+            <option value="">-- Любая марка --</option>
+            {% for marka in car_brands %}
+                <option value="{{ marka }}">{{ marka }}</option>
+            {% endfor %}
+        </select>
+        <br /><br />
+        <label for="modelSelect">Модель:</label><br />
+        <select name="model" id="modelSelect" class="inputBlock">
+            <option value="">-- Любая модель --</option>
+        </select>
+        <br /><br />
+        <label for="regionSelect">Модель:</label><br />
+        <select name="region" id="regionSelect" class="inputBlock">
+            <option value="">-- Любой регион --</option>
+             {% for region in region_choices %}
+                <option value="{{ region }}">{{ region }}</option>
+             {% endfor %}
+        </select>
+        <br /><br />
+        <input type="submit" value="Фильтровать" class="inputBtn" />
+    </form>
+ <img  style="width: 30%;   " src="{% static 'img/bunner.avif'%}" alt="Logo" class="logo">
+</div>
+
+
+
+
+    <div class="main">
+        {% if notices %}
+            <ul>
+            {% for notice in notices %}
+                <li>
+                    <div>
+                        <h2>
+                             <a href="{% url 'detail' notice_id=notice.id %}">
+                                 {{ notice.title }}
+                             </a>
+                        </h2>
+                    </div>
+
+                    <p><b>Марка:</b> {{ notice.marka }}</p>
+                    <p><b>Модель:</b> {{ notice.model }}</p>
+                     <p>Описание:{{ notice.description|truncatewords:3  }}...</p>
+
+                    <p>Регион: {{ notice.region|default:"Не указан" }}</p>
+                    <p>Год: {{ notice.year }}</p>
+                     {% if notice.photo %}
+                        <img src="/media/{{ notice.photo }}" alt="Фото авто" style="max-width:300px;">
+                    {% endif %}
+
+                     <p  class="notice-date">Дата публикации: {{ notice.created_at }}</p>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Объявлений пока нет.</p>
+        {% endif %}
+    </div>
+
+<script>
+    const carModels = {{ car_models|safe }};
+    const markaSelect = document.getElementById('markaSelect');
+    const modelSelect = document.getElementById('modelSelect');
+    const regionSelect = document.getElementById('regionSelect');
+
+    markaSelect.addEventListener('change', function () {
+        const selectedMarka = this.value;
+        modelSelect.innerHTML = '<option value="">-- Любая модель --</option>';
+
+        if (selectedMarka && carModels[selectedMarka]) {
+            carModels[selectedMarka].forEach(function(model) {
+                const option = document.createElement('option');
+                option.value = model;
+                option.text = model;
+                modelSelect.appendChild(option);
+            });
+        }
+    });
+</script>
+</body>
+</html>

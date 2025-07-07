@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <title>Фильтр по марке и модели</title>
+</head>
+<body>
+    <nav class="header">
+        <div><a href="{% url 'home' %}">Main</a></div>
+        <div class="menu">
+            <div><a href="{% url 'create_ad' %}">Add</a></div>
+            <div><a href="#">/</a></div>
+            <div><a href="{% url 'filter_post' %}">Filter</a></div>
+        </div>
+    </nav>
+
+    <form method="get" action="{% url 'filter_result' %}" id="filterForm">
+        <label for="markaSelect">Марка:</label><br />
+        <select name="marka" id="markaSelect" class="inputBlock">
+            <option value="">-- Любая марка --</option>
+            {% for marka in car_brands %}
+                <option value="{{ marka }}">{{ marka }}</option>
+            {% endfor %}
+        </select>
+        <br /><br />
+        <label for="modelSelect">Модель:</label><br />
+        <select name="model" id="modelSelect" class="inputBlock">
+            <option value="">-- Любая модель --</option>
+        </select>
+        <br /><br />
+        <label for="regionSelect">Модель:</label><br />
+        <select name="model" id="regionSelect" class="inputBlock">
+            <option value="">-- Любой регион --</option>
+             {% for region in region_choices %}
+                <option value="{{ region }}">{{ region }}</option>
+             {% endfor %}
+        </select>
+        <br /><br />
+        <input type="submit" value="Фильтровать" class="inputBtn" />
+    </form>
+
+   <script>
+    const carModels = {{ car_models|safe }};
+    const markaSelect = document.getElementById('markaSelect');
+    const modelSelect = document.getElementById('modelSelect');
+    const regionSelect = document.getElementById('regionSelect');
+
+    markaSelect.addEventListener('change', function () {
+        const selectedMarka = this.value;
+        modelSelect.innerHTML = '<option value="">-- Любая модель --</option>';
+
+        if (selectedMarka && carModels[selectedMarka]) {
+            carModels[selectedMarka].forEach(function(model) {
+                const option = document.createElement('option');
+                option.value = model;
+                option.text = model;
+                modelSelect.appendChild(option);
+            });
+        }
+    });
+</script>
+</body>
+</html>

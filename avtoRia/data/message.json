@@ -1,0 +1,24 @@
+[
+    {
+        "marka": "Toyota",
+        "model": "Prado",
+        "year": 2020,
+        "price": 45000.0,
+        "mileage": 100000,
+        "description": "qwe",
+        "photo": "",
+        "timestamp": "2025-07-01T19:37:50.086714"
+    },
+    {
+        "title": "test1",
+        "region": "Днепропетровская",
+        "marka": "Toyota",
+        "model": "Camry",
+        "year": 2021,
+        "price": 37000,
+        "mileage": 120000,
+        "description": "qwe",
+        "photo": "Toyota_Camry_Test.jpeg",
+        "timestamp": "2025-07-07T16:28:21.289659"
+    }
+]

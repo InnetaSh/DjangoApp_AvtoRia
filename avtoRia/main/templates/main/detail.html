@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <title>Объявления</title>
+</head>
+<body>
+    <nav class="header">
+        <div><a href="{% url 'home' %}">
+            <img  style="width: 200px; " src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
+        </a></div>
+        <nav class="menu">
+            <div><a href="{% url 'create_ad' %}" >+Add car</a></div>
+        </nav>
+    </nav>
+
+    <div class="main">
+        <div><h2>{{ notice.title }}</h2></div>
+        <p><b>Марка: </b>{{ notice.marka }}</p>
+        <p><b>Модель: </b>{{ notice.model }}</p>
+        <p><b>Регион: </b>{{ notice.region|default:"Не указан" }}</p>
+        <p><b>Год: </b>{{ notice.year }}</p>
+        <p><b>Цена: </b>{{ notice.price }}$</p>
+        <p><b>Пробег: </b>{{ notice.mileage }}км</p>
+         <p><b>Описание:</b> {{ notice.description }}</p>
+         {% if notice.photo %}
+            <img src="/media/{{ notice.photo }}" alt="Фото авто" style="max-width:300px;">
+        {% endif %}
+
+          <p  class="notice-date">Дата публикации: {{ notice.created_at }}</p>
+         <div style="margin-top: 50px;">
+                <a href="{% url 'home' %}" class="inputBtn">&larr; Назад</a>
+         </div>
+    </div>
+</body>
+</html>
