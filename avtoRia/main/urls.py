@@ -14,4 +14,6 @@ urlpatterns = [
     path('favorites/', views.favorite_notice, name='favorite_notice'),
     path('favorite/add/<int:notice_id>/', views.add_to_favorites, name='add_to_favorites'),
     path('favorite/remove/<int:notice_id>/', views.remove_from_favorites, name='remove_from_favorites'),
+    path('edit/<int:notice_id>/', views.edit_notice, name='edit_notice'),
+    path('delete/<int:notice_id>/', views.delete_notice, name='delete_notice'),
 ]

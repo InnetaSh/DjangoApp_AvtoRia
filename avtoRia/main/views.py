@@ -81,7 +81,7 @@ def add_notice_view(request):
             notice.timestamp = datetime.now()
             notice.save()
 
-            return redirect('home')
+            return redirect('all_notice')
     else:
         form = AvtoRiaForm()
 
@@ -104,15 +104,21 @@ def detail(request, notice_id):
     })
 
 
-
-def user_profile2(request):
+@login_required
+def delete_notice(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id, user=request.user)
+    notice.delete()
     notices = Notice.objects.all()
+    favorite_ids = request.user.favorite_notices.values_list('notice_id', flat=True)
     return render(request, 'main/profile.html', {
         'notices': notices,
+        'favorite_ids': list(favorite_ids),
         'car_brands': CAR_BRANDS,
         'car_models': CAR_MODELS,
         'region_choices': [r for r, _ in REGION_CHOICES],
     })
+
+
 
 @login_required
 def all_notice(request):
@@ -180,8 +186,24 @@ def remove_from_favorites(request, notice_id):
     return redirect(request.META.get('HTTP_REFERER', 'profile'))
 
 
+def edit_notice(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id, user=request.user)  # Только свои объявления
 
+    if request.method == 'POST':
+        form = AvtoRiaForm(request.POST, request.FILES, instance=notice)
+        if form.is_valid():
+            form.save()
+            return redirect('my_notice')
+    else:
+        form = AvtoRiaForm(instance=notice)
 
+    return render(request, 'main/edit_notice.html', {
+        'form': form,
+        'car_brands': CAR_BRANDS,
+        'car_models': CAR_MODELS,
+        'region_choices': [r for r, _ in REGION_CHOICES],
+        'notice': notice,
+    })
 
 
 

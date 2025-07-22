@@ -10,10 +10,13 @@
         </div>
       </div>
         <div class="flexSpaceBetween">
-             <a class="menuBlock" href="{% url 'all_notice'%}">Все объявления</a>
-             <a class="menuBlock" href="{% url 'my_notice'%}">Мои объявления</a>
-             <a class="menuBlock" href="{% url 'hour24_notice'%}">за 24 часа</a>
-             <a class="menuBlock" href="{% url 'favorite_notice'%}">Избранные</a>
+            <a class="menuBlock {% if request.resolver_match.url_name == 'all_notice' %}active{% endif %}" href="{% url 'all_notice' %}">Все объявления</a>
+
+            <a class="menuBlock {% if request.resolver_match.url_name == 'my_notice' %}active{% endif %}" href="{% url 'my_notice' %}">Мои объявления</a>
+
+            <a class="menuBlock {% if request.resolver_match.url_name == 'hour24_notice' %}active{% endif %}" href="{% url 'hour24_notice' %}">за 24 часа</a>
+
+            <a class="menuBlock {% if request.resolver_match.url_name == 'favorite_notice' %}active{% endif %}" href="{% url 'favorite_notice' %}">Избранные</a>
         </div>
     </div>
  <div class="main">
@@ -21,10 +24,16 @@
            <div class="notices-grid">
             {% for notice in notices %}
                 <div class="notice-card">
-                    <h2 class="flexSpaceBetween">
-                        <a  class="decorationNone" href="{% url 'detail' notice_id=notice.id %}">{{ notice.title }}</a>
-                         {% if user.is_authenticated %}
-                            {% if notice.id in favorite_ids %}
+                   <h2 class="flexSpaceBetween">
+                        <a class="decorationNone" href="{% url 'detail' notice_id=notice.id %}">{{ notice.title }}</a>
+
+                        {% if user.is_authenticated %}
+                            {% if request.resolver_match.url_name == 'my_notice' %}
+                                <div>
+                                    <a class="decorationNone" href="{% url 'edit_notice' notice.id %}" title="Редактировать объявление">✎</a>
+                                     <a class="decorationNone" href="{% url 'delete_notice' notice.id %}" title="Удалить объявление" onclick="return confirm('Вы уверены, что хотите удалить объявление?');">🗑</a>
+                               </div>
+                            {% elif notice.id in favorite_ids %}
                                 <a class="decorationNone" href="{% url 'remove_from_favorites' notice.id %}" title="Удалить из избранного">⭐</a>
                             {% else %}
                                 <a class="decorationNone" href="{% url 'add_to_favorites' notice.id %}" title="Добавить в избранное">☆</a>
@@ -34,15 +43,17 @@
 
                     <p><b>Марка:</b> {{ notice.marka }}</p>
                     <p><b>Модель:</b> {{ notice.model }}</p>
+                    <p><b>Цена: </b>{{ notice.price }}$</p>
                     <p>Описание: {{ notice.description|truncatewords:3 }}...</p>
-                    <p>Регион: {{ notice.region|default:"Не указан" }}</p>
-                    <p>Год: {{ notice.year }}</p>
+                    <p>Область: {{ notice.region|default:"Не указан" }}</p>
 
                     {% if notice.photo %}
                         <img src="/media/{{ notice.photo }}" alt="Фото авто" style="max-width:100%; height:auto;">
                     {% endif %}
 
                     <p class="notice-date">Дата публикации: {{ notice.created_at }}</p>
+
+
                 </div>
             {% endfor %}
         </div>

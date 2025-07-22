@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <title>Новое объявление</title>
+</head>
+<body>
+ <nav class="header">
+        <div><a href="{% url 'home' %}">
+            <img  style="width: 200px; " src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
+        </a></div>
+        <nav class="menu">
+            <div><a href="{% url 'create_ad' %}" >+Add car</a></div>
+        </nav>
+    </nav>
+
+<div class="main">
+    <h1>Новое объявление:</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <label for="id_marka">Марка:</label><br />
+        <select class="inputBlock" name="marka" id="id_marka" required>
+            <option value=""></option>
+            {% for brand in car_brands %}
+                <option value="{{ brand }}">{{ brand }}</option>
+            {% endfor %}
+        </select>
+        <br />
+        <label for="id_model">Модель:</label><br />
+        <select class="inputBlock" name="model" id="id_model" required>
+            <option value=""> выберите марку</option>
+        </select>
+
+        {% for field in form %}
+            {% if field.name != 'marka' and field.name != 'model' %}
+                <p>
+                    {{ field.label_tag }}<br />
+                    {{ field }}<br />
+                    {{ field.errors }}
+                </p>
+            {% endif %}
+        {% endfor %}
+
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+
+<script>
+    const carModels = {{ car_models|safe }};
+    const markaSelect = document.getElementById('id_marka');
+    const modelSelect = document.getElementById('id_model');
+
+    markaSelect.addEventListener('change', function() {
+        const selectedMarka = this.value;
+
+        modelSelect.innerHTML = '';
+
+        if (selectedMarka && carModels[selectedMarka]) {
+            carModels[selectedMarka].forEach(function(model) {
+                const option = document.createElement('option');
+                option.value = model;
+                option.text = model;
+                modelSelect.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.text = 'Сначала выберите марку';
+            modelSelect.appendChild(option);
+        }
+    });
+</script>
+</body>
+</html>

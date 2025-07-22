@@ -61,21 +61,16 @@
             {% for notice in notices %}
                 <div class="notice-card">
                     <h2>
-                        <a href="{% url 'detail' notice_id=notice.id %}">{{ notice.title }}</a>
-                         {% if user.is_authenticated %}
-                            {% if notice in user.favorite_notices.all %}
-                                <a href="{% url 'remove_from_favorites' notice.id %}" title="Удалить из избранного">⭐</a>
-                            {% else %}
-                                <a href="{% url 'add_to_favorites' notice.id %}" title="Добавить в избранное">☆</a>
-                            {% endif %}
-                        {% endif %}
+                        <a href="{% url 'home' %}">{{ notice.title }}</a>
+
                     </h2>
 
                     <p><b>Марка:</b> {{ notice.marka }}</p>
                     <p><b>Модель:</b> {{ notice.model }}</p>
+                    <p><b>Цена: </b>{{ notice.price }}$</p>
                     <p>Описание: {{ notice.description|truncatewords:3 }}...</p>
-                    <p>Регион: {{ notice.region|default:"Не указан" }}</p>
-                    <p>Год: {{ notice.year }}</p>
+                    <p>Область: {{ notice.region|default:"Не указан" }}</p>
+
 
                     {% if notice.photo %}
                         <img src="/media/{{ notice.photo }}" alt="Фото авто" style="max-width:100%; height:auto;">
