@@ -1,0 +1,53 @@
+{% extends "main/base_profile.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+        <div class="media-body flex">
+          <h2 class="account-heading">Wellcome, {{ user.username }}!</h2>
+          <p class="text-secondary">{{ user.email }}</p>
+        </div>
+      </div>
+        <div class="flexSpaceBetween">
+             <a class="menuBlock" href="{% url 'all_notice'%}">Все объявления</a>
+             <a class="menuBlock" href="{% url 'my_notice'%}">Мои объявления</a>
+             <a class="menuBlock" href="{% url 'hour24_notice'%}">за 24 часа</a>
+             <a class="menuBlock" href="{% url 'favorite_notice'%}">Избранные</a>
+        </div>
+    </div>
+ <div class="main">
+        {% if notices %}
+           <div class="notices-grid">
+            {% for notice in notices %}
+                <div class="notice-card">
+                    <h2 class="flexSpaceBetween">
+                        <a  class="decorationNone" href="{% url 'detail' notice_id=notice.id %}">{{ notice.title }}</a>
+                         {% if user.is_authenticated %}
+                            {% if notice.id in favorite_ids %}
+                                <a class="decorationNone" href="{% url 'remove_from_favorites' notice.id %}" title="Удалить из избранного">⭐</a>
+                            {% else %}
+                                <a class="decorationNone" href="{% url 'add_to_favorites' notice.id %}" title="Добавить в избранное">☆</a>
+                            {% endif %}
+                        {% endif %}
+                    </h2>
+
+                    <p><b>Марка:</b> {{ notice.marka }}</p>
+                    <p><b>Модель:</b> {{ notice.model }}</p>
+                    <p>Описание: {{ notice.description|truncatewords:3 }}...</p>
+                    <p>Регион: {{ notice.region|default:"Не указан" }}</p>
+                    <p>Год: {{ notice.year }}</p>
+
+                    {% if notice.photo %}
+                        <img src="/media/{{ notice.photo }}" alt="Фото авто" style="max-width:100%; height:auto;">
+                    {% endif %}
+
+                    <p class="notice-date">Дата публикации: {{ notice.created_at }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p>Объявлений пока нет.</p>
+        {% endif %}
+    </div>
+{% endblock content %}

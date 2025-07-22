@@ -1,16 +1,22 @@
 import json
 import os.path
-from datetime import datetime
+from datetime import datetime, timezone
+from django.utils import timezone
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 import decimal
 
 from .form import AvtoRiaForm
-from .models import Notice
+from users.form import UserRegisterForm
 from django.core.files.storage import FileSystemStorage
 import json.decoder
 
+
+from django.contrib.auth.decorators import login_required
+from django.utils.timezone import now, timedelta
+from .models import Notice, ViewedNotice, FavoriteNotice
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -71,8 +77,10 @@ def add_notice_view(request):
         form = AvtoRiaForm(request.POST, request.FILES)
         if form.is_valid():
             notice = form.save(commit=False)
+            notice.user = request.user
             notice.timestamp = datetime.now()
             notice.save()
+
             return redirect('home')
     else:
         form = AvtoRiaForm()
@@ -85,6 +93,11 @@ def add_notice_view(request):
 
 def detail(request, notice_id):
     note = get_object_or_404(Notice, id = notice_id)
+    ViewedNotice.objects.create(
+        user=request.user,
+        notice=note,
+        viewed_at=timezone.now()
+    )
 
     return render(request, 'main/detail.html', {
         'notice': note
@@ -92,10 +105,79 @@ def detail(request, notice_id):
 
 
 
+def user_profile2(request):
+    notices = Notice.objects.all()
+    return render(request, 'main/profile.html', {
+        'notices': notices,
+        'car_brands': CAR_BRANDS,
+        'car_models': CAR_MODELS,
+        'region_choices': [r for r, _ in REGION_CHOICES],
+    })
+
+@login_required
+def all_notice(request):
+    notices = Notice.objects.all()
+    favorite_ids = request.user.favorite_notices.values_list('notice_id', flat=True)
+    return render(request, 'main/profile.html', {
+        'notices': notices,
+        'favorite_ids': list(favorite_ids),
+        'car_brands': CAR_BRANDS,
+        'car_models': CAR_MODELS,
+        'region_choices': [r for r, _ in REGION_CHOICES],
+    })
+
+@login_required
+def my_notice(request):
+    notices = Notice.objects.filter(user=request.user)
+    favorite_ids = request.user.favorite_notices.values_list('notice_id', flat=True)
+    return render(request, 'main/profile.html', {
+        'notices': notices,
+        'favorite_ids': list(favorite_ids),
+        'car_brands': CAR_BRANDS,
+        'car_models': CAR_MODELS,
+        'region_choices': [r for r, _ in REGION_CHOICES],
+    })
+
+@login_required
+def notice_24hour(request):
+    time_threshold = now() - timedelta(hours=24)
+    viewed_notices = ViewedNotice.objects.filter(user=request.user, viewed_at__gte=time_threshold).values_list('notice_id', flat=True)
+    notices = Notice.objects.filter(id__in=viewed_notices)
+    favorite_ids = request.user.favorite_notices.values_list('notice_id', flat=True)
+    return render(request, 'main/profile.html', {
+        'notices': notices,
+        'favorite_ids': list(favorite_ids),
+        'car_brands': CAR_BRANDS,
+        'car_models': CAR_MODELS,
+        'region_choices': [r for r, _ in REGION_CHOICES],
+    })
+
+@login_required
+def favorite_notice(request):
+    favorites = FavoriteNotice.objects.filter(user=request.user).values_list('notice_id', flat=True)
+    notices = Notice.objects.filter(id__in=favorites)
+    favorite_ids = request.user.favorite_notices.values_list('notice_id', flat=True)
+    return render(request, 'main/profile.html', {
+        'notices': notices,
+        'favorite_ids': list(favorite_ids),
+        'car_brands': CAR_BRANDS,
+        'car_models': CAR_MODELS,
+        'region_choices': [r for r, _ in REGION_CHOICES],
+    })
 
 
 
+@login_required
+def add_to_favorites(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    FavoriteNotice.objects.get_or_create(user=request.user, notice=notice)
+    return redirect(request.META.get('HTTP_REFERER', 'profile'))
 
+@login_required
+def remove_from_favorites(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    FavoriteNotice.objects.filter(user=request.user, notice=notice).delete()
+    return redirect(request.META.get('HTTP_REFERER', 'profile'))
 
 
 

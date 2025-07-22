@@ -11,19 +11,15 @@
         <div><a href="{% url 'home' %}">
             <img  style="width: 200px; " src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
         </a></div>
-
-        <nav class="menu">
-<!--            <div class="menuBlock">-->
-<!--                <div><a href="{% url 'create_ad' %}" >+ Add car</a></div>-->
-<!--            </div>-->
+              <nav class="menu">
+            <div class="menuBlock">
+                <div><a href="{% url 'create_ad' %}" >+ Add car</a></div>
+            </div>
              <div class="menuBlock">
-                 <div><a href="{% url 'register' %}" >Enter -></a></div>
+                 <div><a href="{% url 'home' %}" > <-Exit </a></div>
             </div>
         </nav>
-
     </nav>
-
-
 <div class="filterBlock">
     <form method="get" action="{% url 'filter_result' %}" id="filterForm">
         <label for="markaSelect">Марка:</label><br />
@@ -54,42 +50,8 @@
 
 
 
-
-    <div class="main">
-        {% if notices %}
-            <div class="notices-grid">
-            {% for notice in notices %}
-                <div class="notice-card">
-                    <h2>
-                        <a href="{% url 'detail' notice_id=notice.id %}">{{ notice.title }}</a>
-                         {% if user.is_authenticated %}
-                            {% if notice in user.favorite_notices.all %}
-                                <a href="{% url 'remove_from_favorites' notice.id %}" title="Удалить из избранного">⭐</a>
-                            {% else %}
-                                <a href="{% url 'add_to_favorites' notice.id %}" title="Добавить в избранное">☆</a>
-                            {% endif %}
-                        {% endif %}
-                    </h2>
-
-                    <p><b>Марка:</b> {{ notice.marka }}</p>
-                    <p><b>Модель:</b> {{ notice.model }}</p>
-                    <p>Описание: {{ notice.description|truncatewords:3 }}...</p>
-                    <p>Регион: {{ notice.region|default:"Не указан" }}</p>
-                    <p>Год: {{ notice.year }}</p>
-
-                    {% if notice.photo %}
-                        <img src="/media/{{ notice.photo }}" alt="Фото авто" style="max-width:100%; height:auto;">
-                    {% endif %}
-
-                    <p class="notice-date">Дата публикации: {{ notice.created_at }}</p>
-                </div>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>Объявлений пока нет.</p>
-        {% endif %}
-    </div>
-
+  {% block content %}
+    {% endblock %}
 <script>
     const carModels = {{ car_models|safe }};
     const markaSelect = document.getElementById('markaSelect');
@@ -110,5 +72,7 @@
         }
     });
 </script>
+
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>

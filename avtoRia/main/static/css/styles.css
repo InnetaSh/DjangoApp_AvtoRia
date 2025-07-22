@@ -13,6 +13,21 @@ body {
     margin: 0;
     padding: 0;
 }
+.flex{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flexSpaceBetween{
+    width: 80%;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left:10%;
+}
+
+
 .filterBlock{
     display:flex;
     width: 80%;
@@ -35,9 +50,26 @@ nav.header a {
     transition: color 0.3s ease;
 }
 
+.profileRef{
+    color:#34495e;
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+    margin-right: 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.profileRef:hover{
+    color: #16a085;
+}
+.menu{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-
-.menu {
+.menuBlock {
     background-color: #34495e;
     color: white;
     text-align: center;
@@ -49,9 +81,10 @@ nav.header a {
     font-size: 16px;
     transition: background-color 0.3s ease;
     width: 200px;
+    margin-right:10px;
 }
 
-.menu:hover {
+.menuBlock:hover {
     background-color: #16a085;
 }
 
@@ -89,7 +122,42 @@ div.main {
     border-radius: 1px;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
 }
+.notices-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
 
+.favorite-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s ease-in-out;
+}
+
+.favorite-btn.active {
+    color: gold;
+}
+
+.notice-card {
+    flex: 0 1 calc(50% - 20px); /* Две колонки с отступами */
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+a.decorationNone {
+    text-decoration: none;
+    color: inherit;
+}
+
+a.decorationNone:hover {
+    text-decoration: none;
+    color: inherit;
+}
 
 h1 {
     margin-bottom: 25px;

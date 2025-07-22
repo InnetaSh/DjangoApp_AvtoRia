@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Личный кабинет</title>
+     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+</head>
+<body>
+    <h1>Добро пожаловать, {{ user.username }}</h1>
+
+    <h2>Мои объявления</h2>
+    <ul>
+    {% for notice in my_notices %}
+        <li>{{ notice.title }} - <a href="{% url 'edit_notice' notice.id %}">Редактировать</a></li>
+    {% empty %}
+        <p>У вас пока нет объявлений.</p>
+    {% endfor %}
+    </ul>
+
+    <h2>Просмотренные за последние 24 часа</h2>
+    <ul>
+    {% for notice in recent_viewed %}
+        <li>{{ notice.title }}</li>
+    {% empty %}
+        <p>Нет просмотренных объявлений.</p>
+    {% endfor %}
+    </ul>
+
+    <h2>Избранные</h2>
+    <ul>
+    {% for notice in favorites %}
+        <li>
+            {{ notice.title }}
+            <a href="{% url 'toggle_favorite' notice.id %}">Удалить из избранного</a>
+        </li>
+    {% empty %}
+        <p>Нет избранных объявлений.</p>
+    {% endfor %}
+    </ul>
+</body>
+</html>
